@@ -1,288 +1,288 @@
 let xp = 0;
-let health = 100;
-let gold = 50;
-let currentWeapon = 0;
-let fighting;
-let monsterHealth;
-let inventory = ["stick"];
+let vida = 100;
+let ouro = 50;
+let armaAtual = 0;
+let lutando;
+let monstroVida;
+let inventario = ["Pauzinho"];
 
-const button1 = document.querySelector('#button1');
-const button2 = document.querySelector("#button2");
-const button3 = document.querySelector("#button3");
-const text = document.querySelector("#text");
-const xpText = document.querySelector("#xpText");
-const healthText = document.querySelector("#healthText");
-const goldText = document.querySelector("#goldText");
-const monsterStats = document.querySelector("#monsterStats");
-const monsterName = document.querySelector("#monsterName");
-const monsterHealthText = document.querySelector("#monsterHealth");
-const weapons = [
-  { name: 'stick', power: 5 },
-  { name: 'dagger', power: 30 },
-  { name: 'claw hammer', power: 50 },
-  { name: 'sword', power: 100 }
+const botao1 = document.querySelector('#button1');
+const botao2 = document.querySelector("#button2");
+const botao3 = document.querySelector("#button3");
+const texto = document.querySelector("#text");
+const xpTexto = document.querySelector("#xpText");
+const vidaTexto = document.querySelector("#healthText");
+const ouroTexto = document.querySelector("#goldText");
+const monstroStats = document.querySelector("#monsterStats");
+const monstroNome = document.querySelector("#monsterName");
+const monstroVidaTexto = document.querySelector("#monsterHealth");
+const armas = [
+  { nome: 'Pauzinho', poder: 5 },
+  { nome: 'Adaga', poder: 30 },
+  { nome: 'Martelo Pesado', poder: 50 },
+  { nome: 'ESPADA DOS DEUSES', poder: 100 }
 ];
-const monsters = [
+const monstros = [
   {
-    name: "slime",
+    nome: "Gosminha",
     level: 2,
-    health: 15
+    vida: 15
   },
   {
-    name: "fanged beast",
+    nome: "Lobão do Mal",
     level: 8,
-    health: 60
+    vida: 60
   },
   {
-    name: "dragon",
+    nome: "Dragão dos Deuses Foda",
     level: 20,
-    health: 300
+    vida: 300
   }
 ]
-const locations = [
+const localizações = [
   {
-    name: "town square",
-    "button text": ["Go to store", "Go to cave", "Fight dragon"],
-    "button functions": [goStore, goCave, fightDragon],
-    text: "You are in the town square. You see a sign that says \"Store\"."
+    nome: "cidade",
+    "botão texto": ["Ir para loja", "Ir para caverna", "Lutar contra o DRAGÃO DOS DEUSES"],
+    "botão funções": [irLoja, irCaverna, lutarDragao],
+    texto: "Você está no centro da cidade. Você vê uma placa que diz \"Loja\"."
   },
   {
-    name: "store",
-    "button text": ["Buy 10 health (10 gold)", "Buy weapon (30 gold)", "Go to town square"],
-    "button functions": [buyHealth, buyWeapon, goTown],
-    text: "You enter the store."
+    nome: "loja",
+    "botão texto": ["Comprar 10 de vida (10 ouro)", "Comprar Arma (30 ouro)", "Voltar para cidade"],
+    "botão funções": [comprarVida, comprarArma, irCidade],
+    texto: "Você entra na loja."
   },
   {
-    name: "cave",
-    "button text": ["Fight slime", "Fight fanged beast", "Go to town square"],
-    "button functions": [fightSlime, fightBeast, goTown],
-    text: "You enter the cave. You see some monsters."
+    nome: "caverna",
+    "botão texto": ["Lutar contra a Gosminha", "Lutar contra o Lobão do Mal", "Voltar para a cidade"],
+    "botão funções": [lutarSlime, lutarLobo, irCidade],
+    texto: "Você entra na caverna. Você vê alguns monstros."
   },
   {
-    name: "fight",
-    "button text": ["Attack", "Dodge", "Run"],
-    "button functions": [attack, dodge, goTown],
-    text: "You are fighting a monster."
+    nome: "lutar",
+    "botão texto": ["Atacar", "Esquivar", "Correr"],
+    "botão funções": [atacar, esquivar, irCidade],
+    texto: "Você está lutando contra um monstro."
   },
   {
-    name: "kill monster",
-    "button text": ["Go to town square", "Go to town square", "Go to town square"],
-    "button functions": [goTown, goTown, goTown],
-    text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.'
+    nome: "matar monstro",
+    "botão texto": ["Lutar contra Lobão do Mal", "Lutar contra Gosminha", "Voltar para a cidade"],
+    "botão funções": [lutarLobo, lutarSlime, irCidade],
+    texto: 'O monstro grita "AI CARALHO!" e morre. Você ganha XP e encontra ouro.'
   },
   {
-    name: "lose",
-    "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
-    "button functions": [restart, restart, restart],
-    text: "You die. &#x2620;"
+    nome: "perder",
+    "botão texto": ["TENTAR DE NOVO?", "TENTAR DE NOVO?", "TENTAR DE NOVO?"],
+    "botão funções": [restart, restart, restart],
+    texto: "VOCÊ MORREU HAHA. &#x2620;"
   },
   { 
-    name: "win", 
-    "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
-    "button functions": [restart, restart, restart], 
-    text: "You defeat the dragon! YOU WIN THE GAME! &#x1F389;" 
+    nome: "ganhar", 
+    "botão texto": ["TENTAR DE NOVO?", "TENTAR DE NOVO?", "TENTAR DE NOVO?"], 
+    "botão funções": [restart, restart, restart], 
+    texto: "VOCÊ MATO O DRAGÃO DOS DEUSES! VOCÊ GANHOU O JOGO GG! &#x1F389;" 
   },
   {
-    name: "easter egg",
-    "button text": ["2", "8", "Go to town square?"],
-    "button functions": [pickTwo, pickEight, goTown],
-    text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!"
+    nome: "easter egg",
+    "botão texto": ["2", "8", "Voltar para a cidade?"],
+    "botão funções": [escolherDois, escolherOito, irCidade],
+    texto: "Você achou um jogo secreto. Escolha um dos números acima. Números serão selecionados entre 0 e 10. Se o número que você escolheu exista na lista, tu ganha!"
   }
 ];
 
 // initialize buttons
-button1.onclick = goStore;
-button2.onclick = goCave;
-button3.onclick = fightDragon;
+botao1.onclick = irLoja;
+botao2.onclick = irCaverna;
+botao3.onclick = lutarDragao;
 
-function update(location) {
-  monsterStats.style.display = "none";
-  button1.innerText = location["button text"][0];
-  button2.innerText = location["button text"][1];
-  button3.innerText = location["button text"][2];
-  button1.onclick = location["button functions"][0];
-  button2.onclick = location["button functions"][1];
-  button3.onclick = location["button functions"][2];
-  text.innerHTML = location.text;
+function update(localização) {
+  monstroStats.style.display = "none";
+  botao1.innerText = localização["button text"][0];
+  botao2.innerText = localização["button text"][1];
+  botao3.innerText = localização["button text"][2];
+  botao1.onclick = localização["button functions"][0];
+  botao2.onclick = localização["button functions"][1];
+  botao3.onclick = localização["button functions"][2];
+  texto.innerHTML = localização.text;
 }
 
-function goTown() {
-  update(locations[0]);
+function irCidade() {
+  update(localizações[0]);
 }
 
-function goStore() {
-  update(locations[1]);
+function irLoja() {
+  update(localizações[1]);
 }
 
-function goCave() {
-  update(locations[2]);
+function irCaverna() {
+  update(localizações[2]);
 }
 
-function buyHealth() {
-  if (gold >= 10) {
-    gold -= 10;
-    health += 10;
-    goldText.innerText = gold;
-    healthText.innerText = health;
+function comprarVida() {
+  if (ouro >= 10) {
+    ouro -= 10;
+    vida += 10;
+    ouroTexto.innerText = ouro;
+    vidaTexto.innerText = vida;
   } else {
-    text.innerText = "You do not have enough gold to buy health.";
+    texto.innerText = "Você não tem ouro o suficiente para comprar vida";
   }
 }
 
-function buyWeapon() {
-  if (currentWeapon < weapons.length - 1) {
-    if (gold >= 30) {
-      gold -= 30;
-      currentWeapon++;
-      goldText.innerText = gold;
-      let newWeapon = weapons[currentWeapon].name;
-      text.innerText = "You now have a " + newWeapon + ".";
-      inventory.push(newWeapon);
-      text.innerText += " In your inventory you have: " + inventory;
+function comprarArma() {
+  if (armaAtual < armas.length - 1) {
+    if (ouro >= 30) {
+      ouro -= 30;
+      armaAtual++;
+      ouroTexto.innerText = ouro;
+      let newWeapon = armas[armaAtual].nome;
+      texto.innerText = "Você agora possui um " + newWeapon + ".";
+      inventario.push(newWeapon);
+      texto.innerText += " No seu inventário você tem: " + inventario;
     } else {
-      text.innerText = "You do not have enough gold to buy a weapon.";
+      texto.innerText = "Você não tem ouro o suficiente para comprar uma arma.";
     }
   } else {
-    text.innerText = "You already have the most powerful weapon!";
-    button2.innerText = "Sell weapon for 15 gold";
-    button2.onclick = sellWeapon;
+    texto.innerText = "Você já tenha a ESPADA DOS DEUSES porra, quer mais?!";
+    botao2.innerText = "Vender arma por 15 ouro";
+    botao2.onclick = venderArma;
   }
 }
 
-function sellWeapon() {
-  if (inventory.length > 1) {
-    gold += 15;
-    goldText.innerText = gold;
-    let currentWeapon = inventory.shift();
-    text.innerText = "You sold a " + currentWeapon + ".";
-    text.innerText += " In your inventory you have: " + inventory;
+function venderArma() {
+  if (inventario.length > 1) {
+    ouro += 15;
+    ouroTexto.innerText = ouro;
+    let currentWeapon = inventario.shift();
+    texto.innerText = "Você vendeu um " + currentWeapon + ".";
+    texto.innerText += " No seu inventário você tem: " + inventario;
   } else {
-    text.innerText = "Don't sell your only weapon!";
+    texto.innerText = "Não venda sua única arma, imbecil!";
   }
 }
 
-function fightSlime() {
-  fighting = 0;
-  goFight();
+function lutarSlime() {
+  lutando = 0;
+  irLuta();
 }
 
-function fightBeast() {
-  fighting = 1;
-  goFight();
+function lutarLobo() {
+  lutando = 1;
+  irLuta();
 }
 
-function fightDragon() {
-  fighting = 2;
-  goFight();
+function lutarDragao() {
+  lutando = 2;
+  irLuta();
 }
 
-function goFight() {
-  update(locations[3]);
-  monsterHealth = monsters[fighting].health;
-  monsterStats.style.display = "block";
-  monsterName.innerText = monsters[fighting].name;
-  monsterHealthText.innerText = monsterHealth;
+function irLuta() {
+  update(localizações[3]);
+  monstroVida = monstros[lutando].vida;
+  monstroStats.style.display = "block";
+  monstroNome.innerText = monstros[lutando].nome;
+  monstroVidaTexto.innerText = monstroVida;
 }
 
-function attack() {
-  text.innerText = "The " + monsters[fighting].name + " attacks.";
-  text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
-  health -= getMonsterAttackValue(monsters[fighting].level);
-  if (isMonsterHit()) {
-    monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;    
+function atacar() {
+  texto.innerText = "O " + monstros[lutando].nome + " ataca.";
+  texto.innerText += " Você ataca ele com seu " + armas[armaAtual].nome + ".";
+  vida -= pegarMonstroValorAtaque(monstros[lutando].level);
+  if (monstroFoiAtacado()) {
+    monstroVida -= armas[armaAtual].poder + Math.floor(Math.random() * xp) + 1;    
   } else {
-    text.innerText += " You miss.";
+    texto.innerText += " Você erra.";
   }
-  healthText.innerText = health;
-  monsterHealthText.innerText = monsterHealth;
-  if (health <= 0) {
-    lose();
-  } else if (monsterHealth <= 0) {
-    if (fighting === 2) {
-      winGame();
+  vidaTexto.innerText = vida;
+  monstroVidaTexto.innerText = monstroVida;
+  if (vida <= 0) {
+    perder();
+  } else if (monstroVida <= 0) {
+    if (lutando === 2) {
+      ganharJogo();
     } else {
-      defeatMonster();
+      matarMonstro();
     }
   }
-  if (Math.random() <= .1 && inventory.length !== 1) {
-    text.innerText += " Your " + inventory.pop() + " breaks.";
-    currentWeapon--;
+  if (Math.random() <= .1 && inventario.length !== 1) {
+    texto.innerText += " Seu " + inventario.pop() + " quebra.";
+    armaAtual--;
   }
 }
 
-function getMonsterAttackValue(level) {
-  const hit = (level * 5) - (Math.floor(Math.random() * xp));
-  console.log(hit);
-  return hit > 0 ? hit : 0;
+function pegarMonstroValorAtaque(level) {
+  const pegar = (level * 5) - (Math.floor(Math.random() * xp));
+  console.log(pegar);
+  return pegar > 0 ? pegar : 0;
 }
 
-function isMonsterHit() {
-  return Math.random() > .2 || health < 20;
+function monstroFoiAtacado() {
+  return Math.random() > .2 || vida < 20;
 }
 
-function dodge() {
-  text.innerText = "You dodge the attack from the " + monsters[fighting].name;
+function esquivar() {
+  texto.innerText = "Você esquiva o ataque do " + monstros[lutando].nome;
 }
 
-function defeatMonster() {
-  gold += Math.floor(monsters[fighting].level * 6.7);
-  xp += monsters[fighting].level;
-  goldText.innerText = gold;
-  xpText.innerText = xp;
-  update(locations[4]);
+function matarMonstro() {
+  ouro += Math.floor(monstros[lutando].level * 6.7);
+  xp += monstros[lutando].level;
+  ouroTexto.innerText = ouro;
+  xpTexto.innerText = xp;
+  update(localizações[4]);
 }
 
-function lose() {
-  update(locations[5]);
+function perder() {
+  update(localizações[5]);
 }
 
-function winGame() {
-  update(locations[6]);
+function ganharJogo() {
+  update(localizações[6]);
 }
 
 function restart() {
   xp = 0;
-  health = 100;
-  gold = 50;
-  currentWeapon = 0;
-  inventory = ["stick"];
-  goldText.innerText = gold;
-  healthText.innerText = health;
-  xpText.innerText = xp;
-  goTown();
+  vida = 100;
+  ouro = 50;
+  armaAtual = 0;
+  inventario = ["stick"];
+  ouroTexto.innerText = ouro;
+  vidaTexto.innerText = vida;
+  xpTexto.innerText = xp;
+  irCidade();
 }
 
 function easterEgg() {
-  update(locations[7]);
+  update(localizações[7]);
 }
 
-function pickTwo() {
+function escolherDois() {
   pick(2);
 }
 
-function pickEight() {
+function escolherOito() {
   pick(8);
 }
 
-function pick(guess) {
+function pick(adivinha) {
   const numbers = [];
   while (numbers.length < 10) {
     numbers.push(Math.floor(Math.random() * 11));
   }
-  text.innerText = "You picked " + guess + ". Here are the random numbers:\n";
+  texto.innerText = "Você escolheu " + adivinha + ". Aqui está os números alea:\n";
   for (let i = 0; i < 10; i++) {
-    text.innerText += numbers[i] + "\n";
+    texto.innerText += numbers[i] + "\n";
   }
-  if (numbers.includes(guess)) {
-    text.innerText += "Right! You win 20 gold!";
-    gold += 20;
-    goldText.innerText = gold;
+  if (numbers.includes(adivinha)) {
+    texto.innerText += "Certo! Você ganha 20 de ouro!";
+    ouro += 20;
+    ouroTexto.innerText = ouro;
   } else {
-    text.innerText += "Wrong! You lose 10 health!";
-    health -= 10;
-    healthText.innerText = health;
-    if (health <= 0) {
-      lose();
+    texto.innerText += "Errado! Você perde 10 de vida!";
+    vida -= 10;
+    vidaTexto.innerText = vida;
+    if (vida <= 0) {
+      perder();
     }
   }
 }
