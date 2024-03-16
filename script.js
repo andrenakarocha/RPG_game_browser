@@ -6,16 +6,16 @@ let lutando;
 let monstroVida;
 let inventario = ["Pauzinho"];
 
-const botao1 = document.querySelector('#button1');
-const botao2 = document.querySelector("#button2");
-const botao3 = document.querySelector("#button3");
-const texto = document.querySelector("#text");
-const xpTexto = document.querySelector("#xpText");
-const vidaTexto = document.querySelector("#healthText");
-const ouroTexto = document.querySelector("#goldText");
-const monstroStats = document.querySelector("#monsterStats");
-const monstroNome = document.querySelector("#monsterName");
-const monstroVidaTexto = document.querySelector("#monsterHealth");
+const botao1 = document.querySelector("#botao1");
+const botao2 = document.querySelector("#botao2");
+const botao3 = document.querySelector("#botao3");
+const texto = document.querySelector("#texto");
+const xpTexto = document.querySelector("#xpTexto");
+const vidaTexto = document.querySelector("#vidaTexto");
+const ouroTexto = document.querySelector("#ouroTexto");
+const monstroStats = document.querySelector("#monstrosStats");
+const monstroNome = document.querySelector("#monstroNome");
+const monstroVidaTexto = document.querySelector("#monstroVida");
 const armas = [
   { nome: 'Pauzinho', poder: 5 },
   { nome: 'Adaga', poder: 30 },
@@ -48,13 +48,13 @@ const localizações = [
   },
   {
     nome: "loja",
-    "botão texto": ["Comprar 10 de vida (10 ouro)", "Comprar Arma (30 ouro)", "Voltar para cidade"],
+    "botão texto": ["Comprar Vida (10 ouro)", "Comprar Arma (30 ouro)", "Voltar para cidade"],
     "botão funções": [comprarVida, comprarArma, irCidade],
     texto: "Você entra na loja."
   },
   {
     nome: "caverna",
-    "botão texto": ["Lutar contra a Gosminha", "Lutar contra o Lobão do Mal", "Voltar para a cidade"],
+    "botão texto": ["Lutar contra a Gosminha", "Lutar contra o Lobão", "Voltar para a cidade"],
     "botão funções": [lutarSlime, lutarLobo, irCidade],
     texto: "Você entra na caverna. Você vê alguns monstros."
   },
@@ -66,7 +66,7 @@ const localizações = [
   },
   {
     nome: "matar monstro",
-    "botão texto": ["Lutar contra Lobão do Mal", "Lutar contra Gosminha", "Voltar para a cidade"],
+    "botão texto": ["Lutar contra o Lobão", "Lutar contra Gosminha", "Voltar para a cidade"],
     "botão funções": [lutarLobo, lutarSlime, irCidade],
     texto: 'O monstro grita "AI CARALHO!" e morre. Você ganha XP e encontra ouro.'
   },
@@ -80,13 +80,7 @@ const localizações = [
     nome: "ganhar", 
     "botão texto": ["TENTAR DE NOVO?", "TENTAR DE NOVO?", "TENTAR DE NOVO?"], 
     "botão funções": [restart, restart, restart], 
-    texto: "VOCÊ MATO O DRAGÃO DOS DEUSES! VOCÊ GANHOU O JOGO GG! &#x1F389;" 
-  },
-  {
-    nome: "easter egg",
-    "botão texto": ["2", "8", "Voltar para a cidade?"],
-    "botão funções": [escolherDois, escolherOito, irCidade],
-    texto: "Você achou um jogo secreto. Escolha um dos números acima. Números serão selecionados entre 0 e 10. Se o número que você escolheu exista na lista, tu ganha!"
+    texto: "VOCÊ MATO O DRAGÃO DOS DEUSES! VOCÊ GANHOU O JOGO, GG! &#x1F389;" 
   }
 ];
 
@@ -97,13 +91,13 @@ botao3.onclick = lutarDragao;
 
 function update(localização) {
   monstroStats.style.display = "none";
-  botao1.innerText = localização["button text"][0];
-  botao2.innerText = localização["button text"][1];
-  botao3.innerText = localização["button text"][2];
-  botao1.onclick = localização["button functions"][0];
-  botao2.onclick = localização["button functions"][1];
-  botao3.onclick = localização["button functions"][2];
-  texto.innerHTML = localização.text;
+  botao1.innerText = localização["botão texto"][0];
+  botao2.innerText = localização["botão texto"][1];
+  botao3.innerText = localização["botão texto"][2];
+  botao1.onclick = localização["botão funções"][0];
+  botao2.onclick = localização["botão funções"][1];
+  botao3.onclick = localização["botão funções"][2];
+  texto.innerHTML = localização.texto;
 }
 
 function irCidade() {
@@ -136,7 +130,7 @@ function comprarArma() {
       armaAtual++;
       ouroTexto.innerText = ouro;
       let newWeapon = armas[armaAtual].nome;
-      texto.innerText = "Você agora possui um " + newWeapon + ".";
+      texto.innerText = "Você agora possui a(o) " + newWeapon + ".";
       inventario.push(newWeapon);
       texto.innerText += " No seu inventário você tem: " + inventario;
     } else {
@@ -245,44 +239,9 @@ function restart() {
   vida = 100;
   ouro = 50;
   armaAtual = 0;
-  inventario = ["stick"];
+  inventario = ["Pauzinho"];
   ouroTexto.innerText = ouro;
   vidaTexto.innerText = vida;
   xpTexto.innerText = xp;
   irCidade();
-}
-
-function easterEgg() {
-  update(localizações[7]);
-}
-
-function escolherDois() {
-  pick(2);
-}
-
-function escolherOito() {
-  pick(8);
-}
-
-function pick(adivinha) {
-  const numbers = [];
-  while (numbers.length < 10) {
-    numbers.push(Math.floor(Math.random() * 11));
-  }
-  texto.innerText = "Você escolheu " + adivinha + ". Aqui está os números alea:\n";
-  for (let i = 0; i < 10; i++) {
-    texto.innerText += numbers[i] + "\n";
-  }
-  if (numbers.includes(adivinha)) {
-    texto.innerText += "Certo! Você ganha 20 de ouro!";
-    ouro += 20;
-    ouroTexto.innerText = ouro;
-  } else {
-    texto.innerText += "Errado! Você perde 10 de vida!";
-    vida -= 10;
-    vidaTexto.innerText = vida;
-    if (vida <= 0) {
-      perder();
-    }
-  }
 }
